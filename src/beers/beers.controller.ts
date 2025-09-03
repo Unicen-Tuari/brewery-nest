@@ -9,88 +9,43 @@ import {
 } from '@nestjs/common';
 import { CreateBeerDto } from './dto/create-beer.dto';
 import { UpdateBeerDto } from './dto/update-beer.dto';
-import { BeerDto } from './dto/beer.dto';
+import { Beer } from './interfaces/beer.interface';
+import { BeersService } from './beers.service';
 
 @Controller('beers')
 export class BeersController {
+  // Inyectamos el servicio de cervezas
+  constructor(private readonly beersService: BeersService) {}
+
   // Este metodo retorna todas las cervezas de mi aplicacion
   @Get()
-  findAll(): BeerDto[] {
+  findAll(): Beer[] {
     console.log('Obteniendo todas las cervezas');
-    return [
-      new BeerDto(
-        1,
-        'Cerveza 1',
-        'Descripción de la cerveza 1',
-        'Estilo 1',
-        10,
-      ),
-      new BeerDto(
-        2,
-        'Cerveza 2',
-        'Descripción de la cerveza 2',
-        'Estilo 2',
-        20,
-      ),
-      new BeerDto(
-        3,
-        'Cerveza 3',
-        'Descripción de la cerveza 3',
-        'Estilo 3',
-        30,
-      ),
-    ];
+    return this.beersService.findAll();
   }
   // Este metodo retorna una cerveza por su id
   @Get(':id')
-  findOne(@Param('id') id: number): BeerDto {
+  findOne(@Param('id') id: number): Beer {
     console.log(`Obteniendo cerveza con id: ${id}`);
-    return new BeerDto(
-      id,
-      `Cerveza ${id}`,
-      `Descripción de la cerveza ${id}`,
-      `Estilo ${id}`,
-      id * 10,
-    );
+    return this.beersService.findOne(id);
   }
   // Este metodo borra una cerveza
   @Delete(':id')
-  remove(@Param('id') id: number): BeerDto {
+  remove(@Param('id') id: number): Beer {
     console.log(`Borrando cerveza con id: ${id}`);
-    return new BeerDto(
-      id,
-      `Cerveza ${id}`,
-      `Descripción de la cerveza ${id}`,
-      `Estilo ${id}`,
-      id * 10,
-    );
+    return this.beersService.remove(id);
   }
 
   // Este metodo crea una cerveza
   @Post()
-  create(@Body() createBeerDto: CreateBeerDto): BeerDto {
+  create(@Body() createBeerDto: CreateBeerDto): Beer {
     console.log('Creando cerveza:', createBeerDto);
-    return new BeerDto(
-      Math.floor(Math.random() * 1_000_000) + 1,
-      createBeerDto.name,
-      createBeerDto.description,
-      createBeerDto.style,
-      createBeerDto.stock,
-    );
+    return this.beersService.create(createBeerDto);
   }
   // Este metodo actualiza una cerveza
   @Patch(':id')
-  update(
-    @Param('id') id: number,
-    @Body() updateBeerDto: UpdateBeerDto,
-  ): BeerDto {
+  update(@Param('id') id: number, @Body() updateBeerDto: UpdateBeerDto): Beer {
     console.log(`Actualizando cerveza con id: ${id}`, updateBeerDto);
-    return new BeerDto(
-      id,
-      updateBeerDto.name,
-      updateBeerDto.description,
-      updateBeerDto.style,
-      updateBeerDto.stock,
-    );
+    return this.beersService.update(id, updateBeerDto);
   }
 }

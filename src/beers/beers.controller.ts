@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateBeerDto } from './dto/create-beer.dto';
 import { UpdateBeerDto } from './dto/update-beer.dto';
 import { Beer } from './interfaces/beer.interface';
 import { BeersService } from './beers.service';
+import { QueryBeerDto } from './dto/query-beer.dto';
 
 @Controller('beers')
 export class BeersController {
@@ -19,9 +21,9 @@ export class BeersController {
 
   // Este metodo retorna todas las cervezas de mi aplicacion
   @Get()
-  findAll(): Beer[] {
+  findAll(@Query() query: QueryBeerDto): Beer[] {
     console.log('Obteniendo todas las cervezas');
-    return this.beersService.findAll();
+    return this.beersService.findAll(query);
   }
   // Este metodo retorna una cerveza por su id
   @Get(':id')

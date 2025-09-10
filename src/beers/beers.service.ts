@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Beer } from './interfaces/beer.interface';
 import { CreateBeerDto } from './dto/create-beer.dto';
 import { UpdateBeerDto } from './dto/update-beer.dto';
+import { QueryBeerDto } from './dto/query-beer.dto';
 
 @Injectable()
 export class BeersService {
@@ -9,28 +10,77 @@ export class BeersService {
     {
       id: 1,
       name: 'Cerveza 1',
-      style: 'Estilo 1',
+      style: 'Porter',
       description: 'Descripción de la cerveza 1',
       stock: 10,
     },
     {
       id: 2,
       name: 'Cerveza 2',
-      style: 'Estilo 2',
+      style: 'Lager',
       description: 'Descripción de la cerveza 2',
       stock: 20,
     },
     {
       id: 3,
       name: 'Cerveza 3',
-      style: 'Estilo 3',
+      style: 'IPA',
       description: 'Descripción de la cerveza 3',
       stock: 30,
     },
+    {
+      id: 4,
+      name: 'Cerveza 4',
+      style: 'Amber Lager',
+      description: 'Descripción de la cerveza 4',
+      stock: 40,
+    },
+    {
+      id: 5,
+      name: 'Cerveza 5',
+      style: 'IPA',
+      description: 'Descripción de la cerveza 5',
+      stock: 5,
+    },
+    {
+      id: 6,
+      name: 'Cerveza 6',
+      style: 'IPA',
+      description: 'Descripción de la cerveza 6',
+      stock: 20,
+    },
   ];
 
-  findAll(): Beer[] {
-    return this.beers;
+  findAll(query: QueryBeerDto): Beer[] {
+    console.log(
+      'Buscando todas las cervezas en el servicio con query: ',
+      query,
+    );
+    const beersToReturn = this.beers.filter((beer) => {
+      if (
+        query.style &&
+        beer.style.toLowerCase() !== query.style.toLowerCase()
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    const beersSorted = beersToReturn.sort((a, b) => {
+      if (query.sortBy) {
+        const fieldA = a[query.sortBy];
+        const fieldB = b[query.sortBy];
+        if (fieldA < fieldB) {
+          return query.orderBy === 'DESC' ? 1 : -1;
+        }
+        if (fieldA > fieldB) {
+          return query.orderBy === 'DESC' ? -1 : 1;
+        }
+        return 0;
+      }
+      return 0;
+    });
+    return beersSorted;
   }
 
   findOne(id: number): Beer {

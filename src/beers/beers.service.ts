@@ -80,6 +80,12 @@ export class BeersService {
       }
       return 0;
     });
+
+    if (query.page) {
+      const limit = query.limit ? query.limit : 2;
+      return beersSorted.slice((query.page - 1) * limit, query.page * limit);
+    }
+
     return beersSorted;
   }
 
